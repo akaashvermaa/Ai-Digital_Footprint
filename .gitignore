@@ -1,0 +1,36 @@
+# Python environment and caches (start.bat recreates these)
+backend/venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Generated model: start.bat / train_model.py rebuild it from app/data/training_posts.csv
+backend/app/models/*.joblib
+
+# Secrets and local config (copy .env.example to .env and fill in; never commit .env)
+.env
+.env.*
+!.env.example
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+
+# Generated files and scratch output
+*.log
+*.pdf
+.coverage
+htmlcov/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Claude Code local files
+.claude/
