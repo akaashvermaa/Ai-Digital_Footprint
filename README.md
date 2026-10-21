@@ -5,7 +5,7 @@ A web app that measures how exposed a person is online. The user enters their
 
 1. **Detects personal information** in the text using NLP (regex + context rules + spaCy NER)
 2. **Flags risky posts** using a machine-learning classifier we trained (TF-IDF + Logistic Regression)
-3. **Scans 45 websites** to see where the username exists (OSINT, like the tool *Sherlock*)
+3. **Scans 62 websites** to see where the username exists (OSINT, like the tool *Sherlock*)
 4. **Checks data breaches** for the email (free XposedOrNot API)
 5. Combines everything into a **0-100 risk score** (Low / Medium / High) where **every point is traceable to a finding**
 6. Explains each finding (*why it is risky*, *what to do*, *how confident we are*), gives **prioritised advice** and a downloadable **PDF report**
@@ -17,7 +17,7 @@ A web app that measures how exposed a person is online. The user enters their
 Install **Python 3.10+** (tick "Add Python to PATH") and **Node.js LTS**, then **double-click `start.bat`**.
 
 - The first run sets everything up (a few minutes, needs internet), then every run after that starts in seconds.
-- It opens two black windows (backend and frontend) and your browser at http://localhost:5173.
+- It opens two black windows (backend and frontend) and your browser at http://127.0.0.1:5173.
 - To stop the app, close the two black windows or double-click `stop.bat`.
 
 If something fails, the launcher says what to fix. The manual steps below do the same thing by hand.
@@ -43,8 +43,8 @@ npm install        # first time only
 npm run dev
 ```
 
-Open **http://localhost:5173** and click **"Fill example"** to try it.
-API documentation is generated automatically at http://localhost:8000/docs.
+Open **http://127.0.0.1:5173** and click **"Fill example"** to try it.
+API documentation is generated automatically at http://127.0.0.1:8000/docs.
 
 **Run the tests (53):** `cd backend` then `.\venv\Scripts\python -m pytest`
 **Re-measure accuracy:** `cd backend` then `.\venv\Scripts\python evaluate.py` (writes `backend/evaluation/RESULTS.md`)
@@ -64,7 +64,7 @@ API documentation is generated automatically at http://localhost:8000/docs.
    becomes "could not check" instead of breaking the whole result:
      |- pii_detector.py      regex + context rules + spaCy NER  -> personal info findings
      |- text_risk_model.py   TF-IDF + LogisticRegression         -> risky post findings
-     |- username_checker.py  async HTTP to 45 sites              -> accounts found / unknown
+     |- username_checker.py  async HTTP to 62 sites              -> accounts found / unknown
      '- breach_checker.py    XposedOrNot API                     -> breaches
    risk_scorer.py      weighted score 0-100 with a list of contributions
    summary.py          plain-language summary + limitations
@@ -80,7 +80,7 @@ API documentation is generated automatically at http://localhost:8000/docs.
 | `backend/app/security.py` | Input cleaning, rate limit, security headers, error handlers, CORS |
 | `backend/app/schemas.py` | Data models with size limits (Pydantic) |
 | `backend/app/services/` | `pii_detector`, `text_risk_model`, `username_checker`, `breach_checker`, `risk_scorer`, `recommendations`, `summary`, `explanations`, `report_pdf` |
-| `backend/app/data/` | `sites.json` (the 45 sites), `training_posts.csv` (236 labelled posts) |
+| `backend/app/data/` | `sites.json` (the 62 sites), `training_posts.csv` (236 labelled posts) |
 | `backend/evaluate.py` + `backend/evaluation/` | Test sets, scenarios and the generated `RESULTS.md` |
 | `backend/tests/` | 53 automated tests |
 | `frontend/src/` | `App.jsx` and `components/` (form, gauge, chart, findings, accounts, breaches, advice) |
@@ -168,11 +168,11 @@ Table in `backend/evaluation/RESULTS.md`; automated in `tests/test_scenarios.py`
 ## Privacy and security
 - **Nothing is stored:** no database, and inputs are never logged (error handlers log only the exception type).
 - **Consent:** the user must confirm they are checking their own information (or have permission), and the
-  form says exactly where data goes: the username is sent to 45 public websites, the email to XposedOrNot,
+  form says exactly where data goes: the username is sent to 62 public websites, the email to XposedOrNot,
   the text is processed only on our server. Users are told never to paste passwords.
 - **Input validation:** length limits (username 2-40 with an allowed-character check, email format, text
   10,000 characters), control and invisible/bidi characters stripped, readable error messages that never echo the input.
-- **Abuse protection:** rate limit of 10 analyses per minute per IP (each one contacts 45 sites); the PDF
+- **Abuse protection:** rate limit of 10 analyses per minute per IP (each one contacts 62 sites); the PDF
   endpoint accepts only size-limited payloads.
 - **Safe responses:** `Cache-Control: no-store`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`,
   `X-Frame-Options: DENY`; CORS allows only the configured frontend.
@@ -190,7 +190,7 @@ IP, so behind a proxy configure the proxy to rate-limit as well.
 - Person-name detection (spaCy small model) is the weakest part; names are marked low severity for this reason.
 - The risky-post model cannot tell a warning about leaks from an actual leak.
 - A username match only means an account with that name exists; it may belong to someone else.
-- Instagram, X, Facebook and LinkedIn block automated checks, so they are not scanned; some of the 45 sites
+- Instagram, X, Facebook and LinkedIn block automated checks, so they are not scanned; some of the 62 sites
   can also block requests, and those are reported as "could not be checked" instead of "not found".
 - English and Hinglish text only; no image analysis.
 

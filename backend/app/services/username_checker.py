@@ -5,7 +5,7 @@ the "probe" URL) and decide from the HTTP response:
   status       -> HTTP 200 means the profile exists, 404 means it doesn't
   absent_text  -> exists unless the page contains a "not found" marker
   present_text -> exists only if the page contains a marker
-All sites are checked at the same time with asyncio, so a scan takes seconds.
+All sites are checked at the same time with asyncio, so a scan takes seconds (a site silent for 5s counts as "could not check").
 """
 import asyncio
 import json
@@ -52,7 +52,7 @@ async def check_site(client: httpx.AsyncClient, site: dict, username: str) -> bo
 
 async def scan_username(username: str) -> tuple[list[SiteResult], int, int]:
     """Returns (sites where the username was found, sites checked, sites that could not be checked)."""
-    async with httpx.AsyncClient(headers=HEADERS, timeout=8, follow_redirects=True) as client:
+    async with httpx.AsyncClient(headers=HEADERS, timeout=5, follow_redirects=True) as client:
         results = await asyncio.gather(*(check_site(client, s, username) for s in SITES))
 
     found = [

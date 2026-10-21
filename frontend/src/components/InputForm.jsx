@@ -34,7 +34,7 @@ export default function InputForm({ onSubmit, loading }) {
         <label className="field">
           <span>Username</span>
           <input type="text" value={form.username} onChange={update('username')} placeholder="akash_verma06" maxLength={40} />
-          <small>Looked up on 45 public websites.</small>
+          <small>Looked up on 62 public websites.</small>
         </label>
         <label className="field">
           <span>Email</span>
@@ -56,7 +56,7 @@ export default function InputForm({ onSubmit, loading }) {
       </label>
 
       <div className="callout">
-        <strong>Where your data goes.</strong> The username is checked on 45 public websites. The email is
+        <strong>Where your data goes.</strong> The username is checked on 62 public websites. The email is
         checked against a public breach database (XposedOrNot). The text is analysed only on this app&apos;s
         server. Nothing is stored. <strong>Never paste passwords or card numbers.</strong>
       </div>

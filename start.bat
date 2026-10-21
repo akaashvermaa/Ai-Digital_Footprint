@@ -27,13 +27,13 @@ if errorlevel 1 (
 
 netstat -ano | findstr /R /C:":8000 .*LISTENING" >nul
 if not errorlevel 1 (
-  echo  [!] Port 8000 is already in use. If the app is already running, just open http://localhost:5173
+  echo  [!] Port 8000 is already in use. If the app is already running, just open http://127.0.0.1:5173
   echo      Otherwise run stop.bat first, then try again.
   goto :fail
 )
 netstat -ano | findstr /R /C:":5173 .*LISTENING" >nul
 if not errorlevel 1 (
-  echo  [!] Port 5173 is already in use. If the app is already running, just open http://localhost:5173
+  echo  [!] Port 5173 is already in use. If the app is already running, just open http://127.0.0.1:5173
   echo      Otherwise run stop.bat first, then try again.
   goto :fail
 )
@@ -80,15 +80,15 @@ echo  Starting the app...
 start "Footprint backend (close to stop)" /D "%~dp0backend" cmd /k ""venv\Scripts\python.exe" -W ignore -m uvicorn app.main:app --port 8000"
 start "Footprint frontend (close to stop)" /D "%~dp0frontend" cmd /k "npm run dev -- --port 5173 --strictPort"
 
-powershell -NoProfile -Command "for ($i = 0; $i -lt 90; $i++) { try { Invoke-WebRequest -UseBasicParsing http://localhost:8000/api/health -TimeoutSec 2 | Out-Null; Invoke-WebRequest -UseBasicParsing http://localhost:5173 -TimeoutSec 2 | Out-Null; exit 0 } catch { Start-Sleep -Seconds 1 } }; exit 1"
+powershell -NoProfile -Command "for ($i = 0; $i -lt 90; $i++) { try { Invoke-WebRequest -UseBasicParsing http://127.0.0.1:8000/api/health -TimeoutSec 2 | Out-Null; Invoke-WebRequest -UseBasicParsing http://127.0.0.1:5173 -TimeoutSec 2 | Out-Null; exit 0 } catch { Start-Sleep -Seconds 1 } }; exit 1"
 if errorlevel 1 (
   echo  [!] The app did not start. Look at the two black windows that opened for the error message.
   goto :fail
 )
 
-start "" http://localhost:5173
+start "" http://127.0.0.1:5173
 echo.
-echo  The app is running at http://localhost:5173
+echo  The app is running at http://127.0.0.1:5173
 echo  To stop it, close the two black windows (or run stop.bat).
 echo.
 pause
